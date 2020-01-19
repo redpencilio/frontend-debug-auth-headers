@@ -1,0 +1,80 @@
+
+{{#if this.loading}}
+  <div class='loadingScreen'>
+    <img src='/loading.gif' class='loadingImage' alt='loading'/>
+  </div>
+{{/if}}
+
+
+
+<div class='row'>
+
+<div class='col s2'>
+  <h3>History</h3>(last n calls)<br><br>
+
+  <div id='history' class=''>
+    <div class="divider"></div>
+    {{#each this.history as |event|}}
+      <a href="#" {{on "click" (fn this.setFromEvent event)}}>{{event.timeStamp}}</a><div class="divider"></div>
+    {{/each}}
+  </div>
+</div>
+<div class='col s10'>
+  <div class='row'>
+    <div class='col s6'>
+      <h3>Headers(JSON)</h3>(defaults to headers recieved by service)<br><br>
+      <div id='headers'>
+        <IvyCodemirror @options={{this.codeMirrorJSOptions}} @value={{this.headerVal}} @valueUpdated={{this.updateHeaderVal}}/>
+      </div>
+    </div>
+    <div class='col s6'>
+      <h3>Query(SPARQL)</h3>(defaults to first 100 records)<br><br>
+      <div id='query'>
+        <IvyCodemirror @options={{this.codeMirrorSPARQLOptions}} @value={{this.queryVal}} @valueUpdated={{this.updateQueryVal}}/>
+      </div>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='col s3'>
+      <a class="waves-effect waves-light btn-large myButton green" {{on "click" this.clearHistory}}>CLEAR HISTORY</a>
+    </div>
+    <div class='col s3'>
+      <a class="waves-effect waves-light btn-large myButton green" {{on "click" this.getHeaders}}>GET HEADERS FROM SERVICE</a>
+    </div>
+    <div class='col s6'>
+      <a class="waves-effect waves-light btn-large myButton" {{on "click" this.sendRequest}}><i class="material-icons right">arrow_downward</i>SEND</a>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class='col s12'>
+      <h3 class='center' id='scrollTarget'>Response Headers(JSON)</h3><br>
+      
+      <div id='headerResponse' class='response'>
+        {{!-- <IvyCodemirror @options={{this.codeMirrorResponseOptions}} @value={{this.responseHeader}} @valueUpdated={{this.updateResponseHeader}}/> --}}
+        <pre class='json'>
+{{this.responseHeader}}
+        </pre>
+      </div>
+    </div>
+    <div class='col s12'>
+      <h3 class='center'>Response Body(JSON)</h3><br>
+      
+      
+      <div id='bodyResponse' class='response'>
+        {{!-- <IvyCodemirror @options={{this.codeMirrorResponseOptions}} @value={{this.responseBody}} @valueUpdated={{this.updateResponseBody}}/> --}}
+        <pre class='json'>
+{{this.responseBody}}
+        </pre>
+      </div>
+
+    </div>
+  </div>
+
+
+
+</div>
+</div>
+
+
+{{outlet}}

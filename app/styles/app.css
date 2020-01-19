@@ -1,0 +1,27 @@
+.CodeMirror{
+  height: 60vh;
+  border: solid 1px #e0e0e0;
+}
+.response .CodeMirror{
+  height: auto;
+}
+.myButton{
+  width: 100%;
+}
+.json{
+  border: solid 1px #e0e0e0;
+  background-color: #eeeeee;
+}
+.loadingScreen{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  opacity: 80%;
+  z-index: 99;
+}
+.loadingImage{
+  margin-top: 46vh;
+  margin-left: 46vw;
+  width: 8vh;
+}
