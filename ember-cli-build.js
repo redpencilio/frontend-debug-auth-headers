@@ -6,7 +6,7 @@ module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
     // Add options here
     codemirror: {
-      modes: ['javascript', 'sparql'],
+      modes: ['javascript', 'sparql']
     }
   });
   app.import('vendor/materialize/js/materialize.min.js');
@@ -15,9 +15,6 @@ module.exports = function(defaults) {
   app.import('vendor/google/google-icons.css');
 
   app.import('vendor/google/google-icons.woff2');
-  
-  //hack
-  app.import('vendor/codemirror/theme/duotone-light.css');
   // Use `app.import` to add additional libraries to the generated
   // output files.
   //

@@ -10,19 +10,19 @@
 <div class='row'>
 
 <div class='col s2'>
-  <h3>History</h3>(last n calls)<br><br>
+  <h3>History</h3>(newest first)<br><br>
 
   <div id='history' class=''>
     <div class="divider"></div>
     {{#each this.history as |event|}}
-      <a href="#" {{on "click" (fn this.setFromEvent event)}}>{{event.timeStamp}}</a><div class="divider"></div>
+      <a href='#gotHistory' {{on "click" (fn this.setFromEvent event)}}>{{event.timeStamp}}</a><div class="divider"></div>
     {{/each}}
   </div>
 </div>
 <div class='col s10'>
   <div class='row'>
     <div class='col s6'>
-      <h3>Headers(JSON)</h3>(defaults to headers recieved by service)<br><br>
+      <h3>Headers(JSON)</h3>(defaults to public graph)<br><br>
       <div id='headers'>
         <IvyCodemirror @options={{this.codeMirrorJSOptions}} @value={{this.headerVal}} @valueUpdated={{this.updateHeaderVal}}/>
       </div>
@@ -36,13 +36,13 @@
   </div>
   <div class='row'>
     <div class='col s3'>
-      <a class="waves-effect waves-light btn-large myButton green" {{on "click" this.clearHistory}}>CLEAR HISTORY</a>
+      <button type='button' class="waves-effect waves-light btn-large myButton green" {{on "click" this.clearHistory}}>CLEAR HISTORY</button>
     </div>
     <div class='col s3'>
-      <a class="waves-effect waves-light btn-large myButton green" {{on "click" this.getHeaders}}>GET HEADERS FROM SERVICE</a>
+      <button type='button' class="waves-effect waves-light btn-large myButton green" {{on "click" this.getHeaders}}>GET HEADERS FROM SERVICE</button>
     </div>
     <div class='col s6'>
-      <a class="waves-effect waves-light btn-large myButton" {{on "click" this.sendRequest}}><i class="material-icons right">arrow_downward</i>SEND</a>
+      <button type='button' class="waves-effect waves-light btn-large myButton" {{on "click" this.sendRequest}}><i class="material-icons right">arrow_downward</i>SEND</button>
     </div>
   </div>
 
@@ -51,7 +51,6 @@
       <h3 class='center' id='scrollTarget'>Response Headers(JSON)</h3><br>
       
       <div id='headerResponse' class='response'>
-        {{!-- <IvyCodemirror @options={{this.codeMirrorResponseOptions}} @value={{this.responseHeader}} @valueUpdated={{this.updateResponseHeader}}/> --}}
         <pre class='json'>
 {{this.responseHeader}}
         </pre>
@@ -62,7 +61,6 @@
       
       
       <div id='bodyResponse' class='response'>
-        {{!-- <IvyCodemirror @options={{this.codeMirrorResponseOptions}} @value={{this.responseBody}} @valueUpdated={{this.updateResponseBody}}/> --}}
         <pre class='json'>
 {{this.responseBody}}
         </pre>

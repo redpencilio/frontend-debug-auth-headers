@@ -35,8 +35,18 @@ export default class ApplicationController extends Controller {
   }
   
   @action
+  serverError(){
+    this.responseBody='Server Error';
+    this.responseHeader='Server Error';
+    this.loading=false;
+    this.scrollTo('scrollTarget');
+  }
+
+  @action
   updateHistory(){
-    this.history.unshift({headerVal: this.headerVal, queryVal: this.queryVal, timeStamp: JSON.stringify(new Date)});
+    var d=new Date;
+    var timeStamp='on: '+d.getDate()+'/'+d.getMonth()+1+'/'+d.getFullYear()+' at: '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
+    this.history.unshift({headerVal: this.headerVal, queryVal: this.queryVal, timeStamp: timeStamp});
     window.localStorage.setItem('history', JSON.stringify(this.history));
     //hack to update tracked array
     this.history=this.history;
@@ -57,20 +67,26 @@ export default class ApplicationController extends Controller {
   @action
   async getHeaders(){
     this.loading=true;
-    var response= await fetch('/debug-auth-headers/get-headers');
+    try {
+      var response= await fetch('/debug-auth-headers/get-headers');
+    } catch (error) {
+      this.serverError();
+      return false;
+    }
     if(response.ok){
       var headers=await response.json();
       headers = JSON.stringify(headers, null, 2);
       this.headerVal=headers;
+      this.loading=false;
     }
     else{
-      this.headerVal='Server Error';
+      this.serverError();
     }
-    this.loading=false;
   }
   
   @action
   async sendRequest(){
+    
     this.loading=true;
     this.updateHistory();
 
@@ -86,26 +102,28 @@ export default class ApplicationController extends Controller {
       query: this.queryVal,
       headers: JSON.parse(this.headerVal) 
     }
-
-    var response=await fetch('/debug-auth-headers/send-request',{
-      method: 'POST',
-      headers:{
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
-    
+    try {
+      var response=await fetch('/debug-auth-headers/send-request',{
+        method: 'POST',
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+    } catch (error) {
+      this.serverError();
+      return false;
+    }
     if(response.ok){
       response=await response.json();
       this.responseBody=JSON.stringify(response.body, null, 2);
-      this.responseHeader=JSON.stringify(response.headers, null, 2);
+      this.responseHeader=JSON.stringify(response.headers, null, 2);  
+      this.loading=false;
+      this.scrollTo('scrollTarget');
     }
     else{
-      this.responseBody='Server Error';
-      this.responseHeader='Server Error';
+      this.serverError();
     }
-    this.loading=false;
-    this.scrollTo('scrollTarget');
   }
 
   @action
@@ -158,6 +176,4 @@ WHERE{
 
   @tracked
   loading=false;
-
 }
-  
