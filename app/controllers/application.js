@@ -35,14 +35,14 @@ export default class ApplicationController extends Controller {
     setTimeout(function(){
       document.getElementById(location).scrollIntoView({
         behavior: 'smooth'
-      });   
+      });
     }, 50);
   }
-  
+
   @action
-  serverError(){
-    this.responseBody='"Server Error"';
-    this.responseHeader='"Server Error"';
+  serverError(errorMsg){
+    this.responseBody=errorMsg;
+    this.responseHeader=errorMsg;
     this.loading=false;
     this.scrollTo('scrollTarget');
   }
@@ -50,7 +50,7 @@ export default class ApplicationController extends Controller {
   @action
   updateHistory(){
     var d=new Date;
-    
+
     var timeStamp=
       'on: '+
       this.addTrailingZero(d.getDate())+
@@ -64,13 +64,13 @@ export default class ApplicationController extends Controller {
       this.addTrailingZero(d.getMinutes())+
       ':'+
       this.addTrailingZero(d.getSeconds());
-    
+
     this.history.unshift({headerVal: this.headerVal, queryVal: this.queryVal, timeStamp: timeStamp});
     window.localStorage.setItem('history', JSON.stringify(this.history));
     //hack to update tracked array
     this.history=this.history;
   }
-  
+
   @action
   clearHistory(){
     this.history=[]
@@ -89,7 +89,7 @@ export default class ApplicationController extends Controller {
     try {
       var response= await fetch('/debug-auth-headers/get-headers');
     } catch (error) {
-      this.serverError();
+      this.serverError('"Server Error"');
       return false;
     }
     if(response.ok){
@@ -99,27 +99,24 @@ export default class ApplicationController extends Controller {
       this.loading=false;
     }
     else{
-      this.serverError();
+      this.serverError('"Server Error"');
     }
   }
-  
+
   @action
   async sendRequest(){
-    
+
     this.loading=true;
     this.updateHistory();
 
     if(!this.isJsonString(this.headerVal)){
-      this.responseBody='"Invalid JSON Error"';
-      this.responseHeader='"Invalid JSON Error"';
-      this.scrollTo('scrollTarget');
-      this.loading=false;
+      this.serverError('"Invalid JSON Error"')
       return false;
     }
 
     var body={
       query: this.queryVal,
-      headers: JSON.parse(this.headerVal) 
+      headers: JSON.parse(this.headerVal)
     }
     try {
       var response=await fetch('/debug-auth-headers/send-request',{
@@ -130,18 +127,18 @@ export default class ApplicationController extends Controller {
         body: JSON.stringify(body)
       })
     } catch (error) {
-      this.serverError();
+      this.serverError('"Server Error"');
       return false;
     }
     if(response.ok){
       response=await response.json();
       this.responseBody=JSON.stringify(response.body, null, 2);
-      this.responseHeader=JSON.stringify(response.headers, null, 2);  
+      this.responseHeader=JSON.stringify(response.headers, null, 2);
       this.loading=false;
       this.scrollTo('scrollTarget');
     }
     else{
-      this.serverError();
+      this.serverError('"Server Error"');
     }
   }
 
@@ -166,17 +163,15 @@ export default class ApplicationController extends Controller {
   }
 
   codeMirrorJSOptions={lineNumbers: true, mode: "javascript", lineWrapping: true};
-  
-  codeMirrorSPARQLOptions={lineNumbers: true, mode: "sparql", lineWrapping: true};
 
-  codeMirrorResponseOptions={lineNumbers: true, mode: "javascript", lineWrapping: true,  theme: "duotone-light", readOnly: 'nocursor'};
+  codeMirrorSPARQLOptions={lineNumbers: true, mode: "sparql", lineWrapping: true};
 
   @tracked
   headerVal=`\
 {
   "mu-auth-allowed-groups": "[{\\"variables\\":[],\\"name\\":\\"public\\"}]"
 }`;
-  
+
   @tracked
   queryVal=`\
 SELECT*
