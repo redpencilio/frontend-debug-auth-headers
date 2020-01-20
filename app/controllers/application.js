@@ -17,6 +17,11 @@ export default class ApplicationController extends Controller {
     }
   }
 
+  addTrailingZero(num){
+    var str=num.toString(10)
+    return str.length==1?"0"+str:str
+  }
+
   isJsonString(str) {
     try {
       JSON.parse(str);
@@ -25,7 +30,7 @@ export default class ApplicationController extends Controller {
     }
     return true;
   }
-  
+
   scrollTo(location){
     setTimeout(function(){
       document.getElementById(location).scrollIntoView({
@@ -36,8 +41,8 @@ export default class ApplicationController extends Controller {
   
   @action
   serverError(){
-    this.responseBody='Server Error';
-    this.responseHeader='Server Error';
+    this.responseBody='"Server Error"';
+    this.responseHeader='"Server Error"';
     this.loading=false;
     this.scrollTo('scrollTarget');
   }
@@ -45,7 +50,21 @@ export default class ApplicationController extends Controller {
   @action
   updateHistory(){
     var d=new Date;
-    var timeStamp='on: '+d.getDate()+'/'+d.getMonth()+1+'/'+d.getFullYear()+' at: '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
+    
+    var timeStamp=
+      'on: '+
+      this.addTrailingZero(d.getDate())+
+      '/'+
+      this.addTrailingZero(d.getMonth()+1)+
+      '/'+
+      d.getFullYear()+
+      ' at: '+
+      this.addTrailingZero(d.getHours())+
+      ':'+
+      this.addTrailingZero(d.getMinutes())+
+      ':'+
+      this.addTrailingZero(d.getSeconds());
+    
     this.history.unshift({headerVal: this.headerVal, queryVal: this.queryVal, timeStamp: timeStamp});
     window.localStorage.setItem('history', JSON.stringify(this.history));
     //hack to update tracked array
@@ -91,8 +110,8 @@ export default class ApplicationController extends Controller {
     this.updateHistory();
 
     if(!this.isJsonString(this.headerVal)){
-      this.responseBody='Invalid JSON Error';
-      this.responseHeader='Invalid JSON Error';
+      this.responseBody='"Invalid JSON Error"';
+      this.responseHeader='"Invalid JSON Error"';
       this.scrollTo('scrollTarget');
       this.loading=false;
       return false;
@@ -166,10 +185,10 @@ WHERE{
 }LIMIT 100`;
 
   @tracked
-  responseHeader='Waiting for request';
+  responseHeader='"Waiting for request"';
 
   @tracked
-  responseBody='Waiting for request';
+  responseBody='"Waiting for request"';
 
   @tracked
   history;
